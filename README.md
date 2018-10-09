@@ -14,7 +14,7 @@ Run `patcher.exe` on windows, `patcher.dll` on Linux. By default, it will locate
 
 You can pass various arguments to the patcher:
 
-* `exe=|e` to specify the location of the Unity executable
+* `exe=|e=` to specify the location of the Unity executable
 * `theme=|t=` to set the theme, currently only `light` or `dark` are valid
 
 Depending on your system, looking up the offsets to patch can take a couple moments.
