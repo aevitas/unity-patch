@@ -21,7 +21,7 @@ namespace Patcher
             var optionSet = new OptionSet
             {
                 {"theme=|t=", "The theme to be applied to the Unity.", v => themeName = v},
-                {"exe=|e", "The location of the Unity Editor executable.", v =>  fileLocation = v},
+                {"exe=|e=", "The location of the Unity Editor executable.", v =>  fileLocation = v},
                 { "help|h", v => help = v != null }
             };
 
