@@ -12,7 +12,7 @@ namespace Patcher
         private static readonly byte[] _lightPattern = { 0x74, 0x04, 0x33, 0xC0, 0xEB, 0x02, 0x8B, 0x07 };
         private static readonly byte[] _darkPattern = { 0x75, 0x04, 0x33, 0xC0, 0xEB, 0x02, 0x8B, 0x07 };
 
-        static void Main(string[] args)
+        internal static void Main(string[] args)
         {
             var themeName = string.Empty;
             var help = false;
@@ -21,8 +21,8 @@ namespace Patcher
             var optionSet = new OptionSet
             {
                 {"theme=|t=", "The theme to be applied to the Unity.", v => themeName = v},
-                {"exe=|e=", "The location of the Unity Editor executable.", v =>  fileLocation = v},
-                { "help|h", v => help = v != null }
+                {"exe=|e=", "The location of the Unity Editor executable.", v => fileLocation = v},
+                {"help|h", v => help = v != null}
             };
 
             string error = null;
