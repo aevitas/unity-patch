@@ -10,19 +10,24 @@ namespace Patcher
     {
         // When the editor is currently using the light theme, you'll find the light pattern. If it's set to the dark pattern, you'll find the dark one.
         // Patterns are for the Windows build of Unity, version 2019.2.3f1.
-        private static readonly byte[] _lightPattern = { 0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49 };
-        private static readonly byte[] _darkPattern = { 0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49 };
+        private static byte[] _lightPattern = { 0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49 };
+        private static byte[] _darkPattern = { 0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49 };
 
         internal static void Main(string[] args)
         {
             var themeName = string.Empty;
             var help = false;
             var fileLocation = @"C:\Program Files\Unity\Editor\Unity.exe";
+            var mac = false;
 
             var optionSet = new OptionSet
             {
                 {"theme=|t=", "The theme to be applied to the Unity.", v => themeName = v},
                 {"exe=|e=", "The location of the Unity Editor executable.", v => fileLocation = v},
+                {
+                    "mac", "Specifies if the patcher should treat the specified executable as a MacOS executable.",
+                    v => mac = v != null
+                },
                 {"help|h", v => help = v != null}
             };
 
@@ -66,6 +71,13 @@ namespace Patcher
                 Console.WriteLine("Usage: patcher.exe");
                 optionSet.WriteOptionDescriptions(Console.Out);
                 return;
+            }
+
+            if (mac)
+            {
+                // Unity 2019.1.0f2 on MacOS.
+                _lightPattern = new byte[] {0x74, 0x03, 0x41, 0x8b, 0x06, 0x48};
+                _darkPattern = new byte[] { 0x75, 0x03, 0x41, 0x8b, 0x06, 0x48 };
             }
 
             Console.WriteLine($"Opening Unity executable from {fileLocation}...");
