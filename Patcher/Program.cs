@@ -19,14 +19,19 @@ namespace Patcher
             var help = false;
             var fileLocation = @"C:\Program Files\Unity\Editor\Unity.exe";
             var mac = false;
+            var linux = false;
 
             var optionSet = new OptionSet
             {
                 {"theme=|t=", "The theme to be applied to the Unity.", v => themeName = v},
                 {"exe=|e=", "The location of the Unity Editor executable.", v => fileLocation = v},
                 {
-                    "mac", "Specifies if the patcher should treat the specified executable as a MacOS executable.",
+                    "mac", "Specifies if the specified binary is the MacOS version of Unity3D.",
                     v => mac = v != null
+                },
+                {
+                    "linux", "Specifies if the specified binary is the Linux version of Unity3D.",
+                    v => linux = v != null
                 },
                 {"help|h", v => help = v != null}
             };
@@ -75,9 +80,16 @@ namespace Patcher
 
             if (mac)
             {
-                // Unity 2019.1.0f2 on MacOS.
-                _lightPattern = new byte[] {0x74, 0x03, 0x41, 0x8b, 0x06, 0x48};
+                // Unity 2019.1.0f2 for MacOS.
+                _lightPattern = new byte[] { 0x74, 0x03, 0x41, 0x8b, 0x06, 0x48 };
                 _darkPattern = new byte[] { 0x75, 0x03, 0x41, 0x8b, 0x06, 0x48 };
+            }
+
+            if (linux)
+            {
+                // Unity 2019.2.3f for Linux.
+                _lightPattern = new byte[] { 0x74, 0x02, 0x8b, 0x03, 0x48, 0x83 };
+                _darkPattern = new byte[] { 0x75, 0x02, 0x8b, 0x03, 0x48, 0x83 };
             }
 
             Console.WriteLine($"Opening Unity executable from {fileLocation}...");
@@ -111,7 +123,7 @@ namespace Patcher
                         backupFileInfo.Delete();
 
                     using (var backupWriteStream = backupFileInfo.OpenWrite())
-                        backupWriteStream.Write(ms.ToArray(), 0, (int) ms.Length);
+                        backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
 
                     if (backupFileInfo.Exists)
                         Console.WriteLine("Backup file created.. looks awake.");
@@ -131,7 +143,7 @@ namespace Patcher
                         return;
                     }
 
-                    byte themeByte = themeName == "dark" ? (byte) 0x74 : (byte) 0x75;
+                    byte themeByte = themeName == "dark" ? (byte)0x74 : (byte)0x75;
 
                     foreach (var offset in lightOffsets)
                     {
