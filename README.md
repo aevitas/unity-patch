@@ -1,3 +1,5 @@
+![CI Status](https://github.com/aevitas/unity-patch/workflows/CI/badge.svg)
+
 Unity Patch
 ===========
 
