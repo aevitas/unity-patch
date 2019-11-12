@@ -143,7 +143,7 @@ namespace Patcher
                         return;
                     }
 
-                    byte themeByte = themeName == "dark" ? (byte)0x74 : (byte)0x75;
+                    byte themeByte = themeName == "dark" ? (byte)0x75 : (byte)0x74;
 
                     foreach (var offset in lightOffsets)
                     {
