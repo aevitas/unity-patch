@@ -8,18 +8,56 @@ namespace Patcher
 {
     class Program
     {
-        // When the editor is currently using the light theme, you'll find the light pattern. If it's set to the dark pattern, you'll find the dark one.
-        // Patterns are for the Windows build of Unity, version 2019.2.3f1.
-        private static byte[] _lightPattern = { 0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49 };
-        private static byte[] _darkPattern = { 0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49 };
+        private static byte[] _lightPattern;
+        private static byte[] _darkPattern;
+
+        private static readonly Dictionary<string, List<PatchInfo>> _patches = new Dictionary<string, List<PatchInfo>>
+        {
+            {
+                "mac", new List<PatchInfo>
+                {
+                    new PatchInfo
+                    {
+                        Version = "2019.1.0f2",
+                        DarkPattern = new byte[] {0x75, 0x03, 0x41, 0x8b, 0x06, 0x48},
+                        LightPattern = new byte[] {0x74, 0x03, 0x41, 0x8b, 0x06, 0x48}
+                    }
+                }
+            },
+            {
+                "linux", new List<PatchInfo>
+                {
+                    new PatchInfo
+                    {
+                        Version = "2019.2.3f",
+                        DarkPattern = new byte[] {0x75, 0x02, 0x8b, 0x03, 0x48, 0x83},
+                        LightPattern = new byte[] {0x74, 0x02, 0x8b, 0x03, 0x48, 0x83}
+
+                    }
+                }
+            },
+            {
+                "windows", new List<PatchInfo>
+                {
+                    new PatchInfo
+                    {
+                        Version = "2019.2.3f1",
+                        DarkPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
+                        LightPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
+                    }
+                }
+            }
+        };
 
         internal static void Main(string[] args)
         {
             var themeName = string.Empty;
             var help = false;
             var fileLocation = @"C:\Program Files\Unity\Editor\Unity.exe";
+            var windows = true;
             var mac = false;
             var linux = false;
+            string version = string.Empty;
 
             var optionSet = new OptionSet
             {
@@ -32,6 +70,13 @@ namespace Patcher
                 {
                     "linux", "Specifies if the specified binary is the Linux version of Unity3D.",
                     v => linux = v != null
+                },
+                {
+                    "windows", "Specifies if the specified binary is the Windows version of Unity3D.",
+                    v => windows = v != null
+                },
+                {
+                    "version=|v=", "The version of Unity to patch.", v => version = v
                 },
                 {"help|h", v => help = v != null}
             };
@@ -80,16 +125,47 @@ namespace Patcher
 
             if (mac)
             {
-                // Unity 2019.1.0f2 for MacOS.
-                _lightPattern = new byte[] { 0x74, 0x03, 0x41, 0x8b, 0x06, 0x48 };
-                _darkPattern = new byte[] { 0x75, 0x03, 0x41, 0x8b, 0x06, 0x48 };
+                var patch = _patches["mac"]
+                    .FirstOrDefault(p => p.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
+
+                if (patch == null)
+                {
+                    patch = _patches["mac"].First();
+                    Console.WriteLine(string.IsNullOrWhiteSpace(version) ? $"Version not explicitly specified -- defaulting to version {patch.Version} for Mac" : $"Could not find patch details for Mac Unity version {version} -- defaulting to version {patch.Version}.");
+                }
+
+                _darkPattern = patch.DarkPattern;
+                _lightPattern = patch.LightPattern;
             }
 
             if (linux)
             {
-                // Unity 2019.2.3f for Linux.
-                _lightPattern = new byte[] { 0x74, 0x02, 0x8b, 0x03, 0x48, 0x83 };
-                _darkPattern = new byte[] { 0x75, 0x02, 0x8b, 0x03, 0x48, 0x83 };
+                var patch = _patches["linux"]
+                    .FirstOrDefault(p => p.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
+
+                if (patch == null)
+                {
+                    patch = _patches["linux"].First();
+                    Console.WriteLine(string.IsNullOrWhiteSpace(version) ? $"Version not explicitly specified -- defaulting to version {patch.Version} for Linux" : $"Could not find patch details for Linux Unity version {version} -- defaulting to version {patch.Version}.");
+                }
+
+                _darkPattern = patch.DarkPattern;
+                _lightPattern = patch.LightPattern;
+            }
+
+            if (windows)
+            {
+                var patch = _patches["windows"]
+                    .FirstOrDefault(p => p.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
+
+                if (patch == null)
+                {
+                    patch = _patches["windows"].First();
+                    Console.WriteLine(string.IsNullOrWhiteSpace(version) ? $"Version not explicitly specified -- defaulting to version {patch.Version} for Windows" : $"Could not find patch details for Windows Unity version {version} -- defaulting to version {patch.Version}.");
+                }
+
+                _darkPattern = patch.DarkPattern;
+                _lightPattern = patch.LightPattern;
             }
 
             Console.WriteLine($"Opening Unity executable from {fileLocation}...");
@@ -169,6 +245,15 @@ namespace Patcher
                 if (haystack.Skip(i).Take(needle.Length).SequenceEqual(needle))
                     yield return i;
             }
+        }
+
+        private class PatchInfo
+        {
+            public string Version { get; set; }
+
+            public byte[] DarkPattern { get; set; }
+
+            public byte[] LightPattern { get; set; }
         }
     }
 }
