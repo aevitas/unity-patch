@@ -6,7 +6,7 @@ using NDesk.Options;
 
 namespace Patcher
 {
-    class Program
+    internal class Program
     {
         private static byte[] _lightPattern;
         private static byte[] _darkPattern;
@@ -32,7 +32,6 @@ namespace Patcher
                         Version = "2019.2.3f",
                         DarkPattern = new byte[] {0x75, 0x02, 0x8b, 0x03, 0x48, 0x83},
                         LightPattern = new byte[] {0x74, 0x02, 0x8b, 0x03, 0x48, 0x83}
-
                     }
                 }
             },
@@ -57,7 +56,7 @@ namespace Patcher
             var windows = true;
             var mac = false;
             var linux = false;
-            string version = string.Empty;
+            var version = string.Empty;
 
             var optionSet = new OptionSet
             {
@@ -84,7 +83,7 @@ namespace Patcher
             string error = null;
             try
             {
-                List<string> leftover = optionSet.Parse(args);
+                var leftover = optionSet.Parse(args);
                 if (leftover.Any())
                     error = "Unknown arguments: " + string.Join(" ", leftover);
             }
@@ -112,7 +111,8 @@ namespace Patcher
 
             if (string.IsNullOrEmpty(fileLocation))
             {
-                Console.WriteLine($"Please specify the path to the unity executable, or leave it blank to use the default.");
+                Console.WriteLine(
+                    "Please specify the path to the unity executable, or leave it blank to use the default.");
                 return;
             }
 
@@ -131,7 +131,9 @@ namespace Patcher
                 if (patch == null)
                 {
                     patch = _patches["mac"].First();
-                    Console.WriteLine(string.IsNullOrWhiteSpace(version) ? $"Version not explicitly specified -- defaulting to version {patch.Version} for Mac" : $"Could not find patch details for Mac Unity version {version} -- defaulting to version {patch.Version}.");
+                    Console.WriteLine(string.IsNullOrWhiteSpace(version)
+                        ? $"Version not explicitly specified -- defaulting to version {patch.Version} for Mac"
+                        : $"Could not find patch details for Mac Unity version {version} -- defaulting to version {patch.Version}.");
                 }
 
                 _darkPattern = patch.DarkPattern;
@@ -146,7 +148,9 @@ namespace Patcher
                 if (patch == null)
                 {
                     patch = _patches["linux"].First();
-                    Console.WriteLine(string.IsNullOrWhiteSpace(version) ? $"Version not explicitly specified -- defaulting to version {patch.Version} for Linux" : $"Could not find patch details for Linux Unity version {version} -- defaulting to version {patch.Version}.");
+                    Console.WriteLine(string.IsNullOrWhiteSpace(version)
+                        ? $"Version not explicitly specified -- defaulting to version {patch.Version} for Linux"
+                        : $"Could not find patch details for Linux Unity version {version} -- defaulting to version {patch.Version}.");
                 }
 
                 _darkPattern = patch.DarkPattern;
@@ -161,7 +165,9 @@ namespace Patcher
                 if (patch == null)
                 {
                     patch = _patches["windows"].First();
-                    Console.WriteLine(string.IsNullOrWhiteSpace(version) ? $"Version not explicitly specified -- defaulting to version {patch.Version} for Windows" : $"Could not find patch details for Windows Unity version {version} -- defaulting to version {patch.Version}.");
+                    Console.WriteLine(string.IsNullOrWhiteSpace(version)
+                        ? $"Version not explicitly specified -- defaulting to version {patch.Version} for Windows"
+                        : $"Could not find patch details for Windows Unity version {version} -- defaulting to version {patch.Version}.");
                 }
 
                 _darkPattern = patch.DarkPattern;
@@ -199,7 +205,9 @@ namespace Patcher
                         backupFileInfo.Delete();
 
                     using (var backupWriteStream = backupFileInfo.OpenWrite())
-                        backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
+                    {
+                        backupWriteStream.Write(ms.ToArray(), 0, (int) ms.Length);
+                    }
 
                     if (backupFileInfo.Exists)
                         Console.WriteLine("Backup file created.. looks awake.");
@@ -219,7 +227,7 @@ namespace Patcher
                         return;
                     }
 
-                    byte themeByte = themeName == "dark" ? (byte)0x75 : (byte)0x74;
+                    var themeByte = themeName == "dark" ? (byte) 0x75 : (byte) 0x74;
 
                     foreach (var offset in lightOffsets)
                     {
@@ -233,18 +241,17 @@ namespace Patcher
             }
             catch (UnauthorizedAccessException)
             {
-                Console.WriteLine("Could not open the Unity executable - are you running the patcher as an administrator?");
+                Console.WriteLine(
+                    "Could not open the Unity executable - are you running the patcher as an administrator?");
             }
         }
 
         private static IEnumerable<int> FindPattern(byte[] needle, byte[] haystack)
         {
             // This is very slow, especially on 75MB size binaries. But it's also 3 lines of code, and I hate code so less code is better.
-            for (int i = 0; i < haystack.Length; i++)
-            {
+            for (var i = 0; i < haystack.Length; i++)
                 if (haystack.Skip(i).Take(needle.Length).SequenceEqual(needle))
                     yield return i;
-            }
         }
 
         private class PatchInfo
