@@ -123,56 +123,36 @@ namespace Patcher
                 return;
             }
 
+            string os = null;
+
             if (mac)
-            {
-                var patch = _patches["mac"]
-                    .FirstOrDefault(p => p.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
-
-                if (patch == null)
-                {
-                    patch = _patches["mac"].First();
-                    Console.WriteLine(string.IsNullOrWhiteSpace(version)
-                        ? $"Version not explicitly specified -- defaulting to version {patch.Version} for Mac"
-                        : $"Could not find patch details for Mac Unity version {version} -- defaulting to version {patch.Version}.");
-                }
-
-                _darkPattern = patch.DarkPattern;
-                _lightPattern = patch.LightPattern;
-            }
+                os = "mac";
 
             if (linux)
-            {
-                var patch = _patches["linux"]
-                    .FirstOrDefault(p => p.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
-
-                if (patch == null)
-                {
-                    patch = _patches["linux"].First();
-                    Console.WriteLine(string.IsNullOrWhiteSpace(version)
-                        ? $"Version not explicitly specified -- defaulting to version {patch.Version} for Linux"
-                        : $"Could not find patch details for Linux Unity version {version} -- defaulting to version {patch.Version}.");
-                }
-
-                _darkPattern = patch.DarkPattern;
-                _lightPattern = patch.LightPattern;
-            }
+                os = "linux";
 
             if (windows)
+                os = "windows";
+
+            if (string.IsNullOrWhiteSpace(os))
             {
-                var patch = _patches["windows"]
-                    .FirstOrDefault(p => p.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
-
-                if (patch == null)
-                {
-                    patch = _patches["windows"].First();
-                    Console.WriteLine(string.IsNullOrWhiteSpace(version)
-                        ? $"Version not explicitly specified -- defaulting to version {patch.Version} for Windows"
-                        : $"Could not find patch details for Windows Unity version {version} -- defaulting to version {patch.Version}.");
-                }
-
-                _darkPattern = patch.DarkPattern;
-                _lightPattern = patch.LightPattern;
+                Console.WriteLine($"No OS was specified - please specify a valid operating system when running the patcher. See patcher -h for available options.");
+                return;
             }
+
+            var patch = _patches[os]
+                .FirstOrDefault(p => p.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
+
+            if (patch == null)
+            {
+                patch = _patches[os].First();
+                Console.WriteLine(string.IsNullOrWhiteSpace(version)
+                    ? $"Version not explicitly specified -- defaulting to version {patch.Version} for {os}"
+                    : $"Could not find patch details for {os} Unity version {version} -- defaulting to version {patch.Version}.");
+            }
+
+            _darkPattern = patch.DarkPattern;
+            _lightPattern = patch.LightPattern;
 
             Console.WriteLine($"Opening Unity executable from {fileLocation}...");
 
@@ -206,7 +186,7 @@ namespace Patcher
 
                     using (var backupWriteStream = backupFileInfo.OpenWrite())
                     {
-                        backupWriteStream.Write(ms.ToArray(), 0, (int) ms.Length);
+                        backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
                     }
 
                     if (backupFileInfo.Exists)
@@ -227,7 +207,7 @@ namespace Patcher
                         return;
                     }
 
-                    var themeByte = themeName == "dark" ? (byte) 0x75 : (byte) 0x74;
+                    var themeByte = themeName == "dark" ? (byte)0x75 : (byte)0x74;
 
                     foreach (var offset in lightOffsets)
                     {
