@@ -22,6 +22,11 @@ You can pass various arguments to the patcher:
 
 Depending on your system, looking up the offsets to patch can take a couple moments.
 
+Issues
+======
+
+If the patcher doesn't work, please let us know by opening an [issue](https://github.com/aevitas/unity-patch/issues), and provide as much details as you can. We provide some issue templates for common issues - please use them when applicable. They help us resolve issues faster.
+
 Linux and MacOS
 ===============
 
