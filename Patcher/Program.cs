@@ -43,6 +43,12 @@ namespace Patcher
                         Version = "2019.2.3f1",
                         DarkPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
                         LightPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
+                    },
+                    new PatchInfo
+                    {
+                        Version = "2020.1",
+                        DarkPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
+                        LightPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
                     }
                 }
             }
@@ -206,7 +212,7 @@ namespace Patcher
 
                     using (var backupWriteStream = backupFileInfo.OpenWrite())
                     {
-                        backupWriteStream.Write(ms.ToArray(), 0, (int) ms.Length);
+                        backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
                     }
 
                     if (backupFileInfo.Exists)
@@ -227,7 +233,7 @@ namespace Patcher
                         return;
                     }
 
-                    var themeByte = themeName == "dark" ? (byte) 0x75 : (byte) 0x74;
+                    var themeByte = themeName == "dark" ? (byte)0x75 : (byte)0x74;
 
                     foreach (var offset in lightOffsets)
                     {
