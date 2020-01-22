@@ -22,6 +22,32 @@ You can pass various arguments to the patcher:
 
 Depending on your system, looking up the offsets to patch can take a couple moments.
 
+Unity Versions
+--------------
+
+The patcher supports multiple versions of Unity. Versions can be specified by passing the `-v=` or `--version=` command line argument.
+
+For instance, if you want to patch Unity version 2020.1 on Windows, you'd run:
+
+```
+patcher.exe --windows --version=2020.1 --t=dark
+```
+
+Currently, the following OS and Unity version combinations are supported:
+
+**Windows**
+* 2020.1
+* 2019.3
+* 2019.2.3f1
+
+**Linux**
+* 2019.2.3f
+
+**MacOS**
+* 2019.1.0f2
+
+If you don't specify a version, the patcher will choose a default version.
+
 Issues
 ======
 
