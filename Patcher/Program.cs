@@ -202,7 +202,7 @@ namespace Patcher
                     }
 
                     if (backupFileInfo.Exists)
-                        Console.WriteLine("Backup file created.. looks awake.");
+                        Console.WriteLine($"Backup '{backupFileInfo.Name}' created.");
 
                     Console.WriteLine("Searching for theme offset..");
 
