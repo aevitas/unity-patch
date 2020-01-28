@@ -65,7 +65,7 @@ namespace Patcher
             var themeName = string.Empty;
             var help = false;
             var fileLocation = @"C:\Program Files\Unity\Editor\Unity.exe";
-            var windows = true;
+            var windows = false;
             var mac = false;
             var linux = false;
             var version = string.Empty;
