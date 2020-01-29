@@ -19,6 +19,9 @@ You can pass various arguments to the patcher:
 * `exe=|e=` to specify the location of the Unity executable
 * `theme=|t=` to set the theme, currently only `light` or `dark` are valid
 * `help|h` to display the options the patcher supports
+* `--windows` for Windows builds of Unity
+* `--linux` for Linux builds of Unity
+* `--mac` for MacOS builds of Unity
 
 Depending on your system, looking up the offsets to patch can take a couple moments.
 
@@ -58,8 +61,8 @@ Linux and MacOS
 
 When running the patcher on Linux or MacOS, be sure to run the respective binaries for your operating system. They are located in `osx-x64` for Mac, and `linux-x64` for Linux.
 
-* Mac users should run the patcher with the `-mac` command line option
-* Linux users should run the patcher with the `-linux` command line option
+* Mac users should run the patcher with the `--mac` command line option
+* Linux users should run the patcher with the `--linux` command line option
 
 For example, on Linux you would run:
 
