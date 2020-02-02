@@ -21,6 +21,12 @@ namespace Patcher
                         Version = "2019.1.0f2",
                         DarkPattern = new byte[] {0x75, 0x03, 0x41, 0x8b, 0x06, 0x48},
                         LightPattern = new byte[] {0x74, 0x03, 0x41, 0x8b, 0x06, 0x48}
+                    },
+                    new PatchInfo
+                    {
+                        Version = "2019.3.0f6",
+                        DarkPattern = new byte[] {0x80, 0x3D, 0x1D, 0x96, 0x83, 0x06, 0x00, 0x0F, 0x85, 0xD5, 0x00, 0x00, 0x00, 0x8B},
+                        LightPattern = new byte[] {0x80, 0x3D, 0x1D, 0x96, 0x83, 0x06, 0x00, 0x0F, 0x84, 0xD5, 0x00, 0x00, 0x00, 0x8B}
                     }
                 }
             },
@@ -189,7 +195,7 @@ namespace Patcher
                 {
                     fs.CopyTo(ms);
 
-                    Console.WriteLine("Creating backup..");
+                    Console.WriteLine("Creating backup...");
 
                     var backupFileInfo = new FileInfo(fileInfo.FullName + ".bak");
 
@@ -204,28 +210,37 @@ namespace Patcher
                     if (backupFileInfo.Exists)
                         Console.WriteLine($"Backup '{backupFileInfo.Name}' created.");
 
-                    Console.WriteLine("Searching for theme offset..");
+                    Console.WriteLine("Searching for theme offset...");
 
                     var buffer = ms.ToArray();
+
                     var lightOffsets = FindPattern(_lightPattern, buffer).ToList();
                     var darkOffsets = FindPattern(_darkPattern, buffer).ToList();
                     lightOffsets.AddRange(darkOffsets);
 
                     var found = lightOffsets.Any();
-
                     if (!found)
                     {
-                        Console.WriteLine("Could not find the theme offset in the specified executable.");
+                        Console.WriteLine("Error: Could not find the theme offset in the specified executable!");
                         return;
                     }
-
-                    var themeByte = themeName == "dark" ? (byte)0x75 : (byte)0x74;
+                    var foundMoreThanExpected = lightOffsets.Count > 1;
+                    if (foundMoreThanExpected)
+                    {
+                        Console.WriteLine("Warning: Found more than expected theme offsets. Outcome might be unexpected!");
+                        return;
+                    }
+                    var themeBytes = themeName == "dark" ? _darkPattern : _lightPattern;
 
                     foreach (var offset in lightOffsets)
                     {
-                        Console.WriteLine($"Patching theme to {themeName}..");
-                        fs.Position = offset;
-                        fs.WriteByte(themeByte);
+                        Console.WriteLine($"Patching theme to {themeName}...");
+                        var offsetInThemeBytes = offset;
+                        foreach (var themeByte in themeBytes) {
+                            fs.Position = offsetInThemeBytes;
+                            fs.WriteByte(themeByte);
+                            offsetInThemeBytes++;
+                        }
                     }
 
                     Console.WriteLine("Unity was successfully patched. Enjoy!");
