@@ -22,6 +22,7 @@ You can pass various arguments to the patcher:
 * `--windows` for Windows builds of Unity
 * `--linux` for Linux builds of Unity
 * `--mac` for MacOS builds of Unity
+* `--force|--f` to gently apply force
 
 Depending on your system, looking up the offsets to patch can take a couple moments.
 
