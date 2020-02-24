@@ -8,9 +8,6 @@ namespace Patcher
 {
     internal class Program
     {
-        private static byte[] _lightPattern;
-        private static byte[] _darkPattern;
-
         private static readonly Dictionary<string, List<PatchInfo>> _patches = new Dictionary<string, List<PatchInfo>>
         {
             {
@@ -130,7 +127,7 @@ namespace Patcher
             if (string.IsNullOrEmpty(fileLocation))
             {
                 Console.WriteLine(
-                    "Please specify the path to the unity executable, or leave it blank to use the default.");
+                    "Please specify the path to the Unity executable, or leave it blank to use the default.");
                 return;
             }
 
@@ -168,9 +165,6 @@ namespace Patcher
                     ? $"Version not explicitly specified -- defaulting to version {patch.Version} for {os}"
                     : $"Could not find patch details for {os} Unity version {version} -- defaulting to version {patch.Version}.");
             }
-
-            _darkPattern = patch.DarkPattern;
-            _lightPattern = patch.LightPattern;
 
             Console.WriteLine($"Opening Unity executable from {fileLocation}...");
 
@@ -214,32 +208,33 @@ namespace Patcher
 
                     var buffer = ms.ToArray();
 
-                    var lightOffsets = FindPattern(_lightPattern, buffer).ToList();
-                    var darkOffsets = FindPattern(_darkPattern, buffer).ToList();
-                    lightOffsets.AddRange(darkOffsets);
+                    var lightOffsets = FindPattern(patch.LightPattern, buffer).ToArray();
+                    var darkOffsets = FindPattern(patch.DarkPattern, buffer).ToArray();
+                    var offsets = new HashSet<int>(lightOffsets);
+                    offsets.UnionWith(darkOffsets);
 
-                    var found = lightOffsets.Any();
+                    var found = offsets.Any();
                     if (!found)
                     {
                         Console.WriteLine("Error: Could not find the theme offset in the specified executable!");
                         return;
                     }
-                    var foundMoreThanExpected = lightOffsets.Count > 1;
-                    if (foundMoreThanExpected)
+                    var foundMultipleOffsets = offsets.Count > 1;
+                    if (foundMultipleOffsets)
                     {
                         Console.WriteLine("Warning: Found more than expected theme offsets. Outcome might be unexpected!");
                         return;
                     }
-                    var themeBytes = themeName == "dark" ? _darkPattern : _lightPattern;
+                    var themeBytes = themeName == "dark" ? patch.DarkPattern : patch.LightPattern;
 
-                    foreach (var offset in lightOffsets)
+                    Console.WriteLine($"Patching to {themeName}...");
+
+                    foreach (var offset in offsets)
                     {
-                        Console.WriteLine($"Patching theme to {themeName}...");
-                        var offsetInThemeBytes = offset;
-                        foreach (var themeByte in themeBytes) {
-                            fs.Position = offsetInThemeBytes;
-                            fs.WriteByte(themeByte);
-                            offsetInThemeBytes++;
+                        for (int i = 0; i < themeBytes.Length; i++)
+                        {
+                            fs.Position = offset + i;
+                            fs.WriteByte(themeBytes[i]);
                         }
                     }
 
