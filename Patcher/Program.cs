@@ -43,21 +43,27 @@ namespace Patcher
                 {
                     new PatchInfo
                     {
+                        Version = "2019.3.2f1",
+                        LightPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
+                        DarkPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
+                    },
+                    new PatchInfo
+                    {
                         Version = "2019.2.3f1",
-                        DarkPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
-                        LightPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
+                        LightPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
+                        DarkPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
                     },
                     new PatchInfo
                     {
                         Version = "2019.3",
-                        DarkPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
-                        LightPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
+                        LightPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
+                        DarkPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
                     },
                     new PatchInfo
                     {
                         Version = "2020.1",
-                        DarkPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
-                        LightPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
+                        LightPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
+                        DarkPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
                     }
                 }
             }
@@ -67,7 +73,7 @@ namespace Patcher
         {
             var themeName = string.Empty;
             var help = false;
-            var fileLocation = @"C:\Program Files\Unity\Editor\Unity.exe";
+            var fileLocation = @"C:\Program Files\Unity\Hub\Editor\2019.3.2f1\Editor\Unity.exe";
             var windows = false;
             var mac = false;
             var linux = false;
@@ -228,7 +234,7 @@ namespace Patcher
                     {
                         Console.WriteLine($"Warning: Found more than one occurrence of the theme offset in the specified executable. There is a chance that patching it leads to undefined behaviour. It could also just work fine.{Environment.NewLine}{Environment.NewLine}");
                         Console.WriteLine("Run the patcher with the --force option if you want to patch regardless of this warning.");
-                        
+
                         if (!force)
                             return;
                     }
