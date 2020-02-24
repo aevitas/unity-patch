@@ -8,7 +8,7 @@ namespace Patcher
 {
     internal class Program
     {
-        private static readonly Dictionary<string, List<PatchInfo>> _patches = new Dictionary<string, List<PatchInfo>>
+        private static readonly Dictionary<string, List<PatchInfo>> Patches = new Dictionary<string, List<PatchInfo>>
         {
             {
                 "mac", new List<PatchInfo>
@@ -72,6 +72,7 @@ namespace Patcher
             var mac = false;
             var linux = false;
             var version = string.Empty;
+            var force = false;
 
             var optionSet = new OptionSet
             {
@@ -91,6 +92,9 @@ namespace Patcher
                 },
                 {
                     "version=|v=", "The version of Unity to patch.", v => version = v
+                },
+                {
+                    "force|f", "Gently applies force.", v => force = v != null
                 },
                 {"help|h", v => help = v != null}
             };
@@ -155,12 +159,12 @@ namespace Patcher
                 return;
             }
 
-            var patch = _patches[os]
+            var patch = Patches[os]
                 .FirstOrDefault(p => p.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
 
             if (patch == null)
             {
-                patch = _patches[os].First();
+                patch = Patches[os].First();
                 Console.WriteLine(string.IsNullOrWhiteSpace(version)
                     ? $"Version not explicitly specified -- defaulting to version {patch.Version} for {os}"
                     : $"Could not find patch details for {os} Unity version {version} -- defaulting to version {patch.Version}.");
@@ -222,8 +226,11 @@ namespace Patcher
                     var foundMultipleOffsets = offsets.Count > 1;
                     if (foundMultipleOffsets)
                     {
-                        Console.WriteLine("Warning: Found more than expected theme offsets. Outcome might be unexpected!");
-                        return;
+                        Console.WriteLine($"Warning: Found more than one occurrence of the theme offset in the specified executable. There is a chance that patching it leads to undefined behaviour. It could also just work fine.{Environment.NewLine}{Environment.NewLine}");
+                        Console.WriteLine("Run the patcher with the --force option if you want to patch regardless of this warning.");
+                        
+                        if (!force)
+                            return;
                     }
                     var themeBytes = themeName == "dark" ? patch.DarkPattern : patch.LightPattern;
 
