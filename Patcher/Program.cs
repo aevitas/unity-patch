@@ -194,65 +194,64 @@ namespace Patcher
                     return;
                 }
 
-                using (var fs = File.Open(fileInfo.FullName, FileMode.Open, FileAccess.ReadWrite))
-                using (var ms = new MemoryStream())
+                using var fs = File.Open(fileInfo.FullName, FileMode.Open, FileAccess.ReadWrite);
+                using var ms = new MemoryStream();
+
+                fs.CopyTo(ms);
+
+                Console.WriteLine("Creating backup...");
+
+                var backupFileInfo = new FileInfo(fileInfo.FullName + ".bak");
+
+                if (backupFileInfo.Exists)
+                    backupFileInfo.Delete();
+
+                using (var backupWriteStream = backupFileInfo.OpenWrite())
                 {
-                    fs.CopyTo(ms);
-
-                    Console.WriteLine("Creating backup...");
-
-                    var backupFileInfo = new FileInfo(fileInfo.FullName + ".bak");
-
-                    if (backupFileInfo.Exists)
-                        backupFileInfo.Delete();
-
-                    using (var backupWriteStream = backupFileInfo.OpenWrite())
-                    {
-                        backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
-                    }
-
-                    if (backupFileInfo.Exists)
-                        Console.WriteLine($"Backup '{backupFileInfo.Name}' created.");
-
-                    Console.WriteLine("Searching for theme offset...");
-
-                    var buffer = ms.ToArray();
-
-                    var lightOffsets = FindPattern(patch.LightPattern, buffer).ToArray();
-                    var darkOffsets = FindPattern(patch.DarkPattern, buffer).ToArray();
-                    var offsets = new HashSet<int>(lightOffsets);
-                    offsets.UnionWith(darkOffsets);
-
-                    var found = offsets.Any();
-                    if (!found)
-                    {
-                        Console.WriteLine("Error: Could not find the theme offset in the specified executable!");
-                        return;
-                    }
-                    var foundMultipleOffsets = offsets.Count > 1;
-                    if (foundMultipleOffsets)
-                    {
-                        Console.WriteLine($"Warning: Found more than one occurrence of the theme offset in the specified executable. There is a chance that patching it leads to undefined behaviour. It could also just work fine.{Environment.NewLine}{Environment.NewLine}");
-                        Console.WriteLine("Run the patcher with the --force option if you want to patch regardless of this warning.");
-
-                        if (!force)
-                            return;
-                    }
-                    var themeBytes = themeName == "dark" ? patch.DarkPattern : patch.LightPattern;
-
-                    Console.WriteLine($"Patching to {themeName}...");
-
-                    foreach (var offset in offsets)
-                    {
-                        for (int i = 0; i < themeBytes.Length; i++)
-                        {
-                            fs.Position = offset + i;
-                            fs.WriteByte(themeBytes[i]);
-                        }
-                    }
-
-                    Console.WriteLine("Unity was successfully patched. Enjoy!");
+                    backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
                 }
+
+                if (backupFileInfo.Exists)
+                    Console.WriteLine($"Backup '{backupFileInfo.Name}' created.");
+
+                Console.WriteLine("Searching for theme offset...");
+
+                var buffer = ms.ToArray();
+
+                var lightOffsets = FindPattern(patch.LightPattern, buffer).ToArray();
+                var darkOffsets = FindPattern(patch.DarkPattern, buffer).ToArray();
+                var offsets = new HashSet<int>(lightOffsets);
+                offsets.UnionWith(darkOffsets);
+
+                var found = offsets.Any();
+                if (!found)
+                {
+                    Console.WriteLine("Error: Could not find the theme offset in the specified executable!");
+                    return;
+                }
+                var foundMultipleOffsets = offsets.Count > 1;
+                if (foundMultipleOffsets)
+                {
+                    Console.WriteLine($"Warning: Found more than one occurrence of the theme offset in the specified executable. There is a chance that patching it leads to undefined behaviour. It could also just work fine.{Environment.NewLine}{Environment.NewLine}");
+                    Console.WriteLine("Run the patcher with the --force option if you want to patch regardless of this warning.");
+
+                    if (!force)
+                        return;
+                }
+                var themeBytes = themeName == "dark" ? patch.DarkPattern : patch.LightPattern;
+
+                Console.WriteLine($"Patching to {themeName}...");
+
+                foreach (var offset in offsets)
+                {
+                    for (int i = 0; i < themeBytes.Length; i++)
+                    {
+                        fs.Position = offset + i;
+                        fs.WriteByte(themeBytes[i]);
+                    }
+                }
+
+                Console.WriteLine("Unity was successfully patched. Enjoy!");
             }
             catch (UnauthorizedAccessException)
             {
