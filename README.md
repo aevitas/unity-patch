@@ -49,6 +49,7 @@ Currently, the following OS and Unity version combinations are supported:
 
 **MacOS**
 * 2019.1.0f2
+* 2019.3.0f6
 
 If you don't specify a version, the patcher will choose a default version.
 
