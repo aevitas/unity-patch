@@ -80,8 +80,6 @@ namespace Patcher
             var version = string.Empty;
             var force = false;
 
-            var info = Patches["windows"].FirstOrDefault();
-
             var optionSet = new OptionSet
             {
                 {"theme=|t=", "The theme to be applied to the Unity.", v => themeName = v},
