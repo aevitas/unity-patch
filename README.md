@@ -53,6 +53,13 @@ Currently, the following OS and Unity version combinations are supported:
 
 If you don't specify a version, the patcher will choose a default version.
 
+Troubleshooting
+===============
+
+To get the highest chance of success, you should always run the patch on a clean install of Unity. If that doesn't work, you can try:
+
+* Resetting your user preferences either manually or by calling [`EditorPrefs.DeleteAll()`](https://github.com/aevitas/unity-patch/issues/17#issuecomment-592070343)
+
 Issues
 ======
 
