@@ -25,7 +25,7 @@ namespace Patcher
                         DarkPattern = new byte[] {0x80, 0x3D, 0x1D, 0x96, 0x83, 0x06, 0x00, 0x0F, 0x85, 0xD5, 0x00, 0x00, 0x00, 0x8B},
                         LightPattern = new byte[] {0x80, 0x3D, 0x1D, 0x96, 0x83, 0x06, 0x00, 0x0F, 0x84, 0xD5, 0x00, 0x00, 0x00, 0x8B}
                     }
-                }
+                }.OrderByDescending(info => info.Version).ToList()
             },
             {
                 "linux", new List<PatchInfo>
@@ -36,7 +36,7 @@ namespace Patcher
                         DarkPattern = new byte[] {0x75, 0x02, 0x8b, 0x03, 0x48, 0x83},
                         LightPattern = new byte[] {0x74, 0x02, 0x8b, 0x03, 0x48, 0x83}
                     }
-                }
+                }.OrderByDescending(info => info.Version).ToList()
             },
             {
                 "windows", new List<PatchInfo>
@@ -65,7 +65,7 @@ namespace Patcher
                         LightPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
                         DarkPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
                     }
-                }
+                }.OrderByDescending(info => info.Version).ToList()
             }
         };
 
@@ -79,6 +79,8 @@ namespace Patcher
             var linux = false;
             var version = string.Empty;
             var force = false;
+
+            var info = Patches["windows"].FirstOrDefault();
 
             var optionSet = new OptionSet
             {
