@@ -24,6 +24,12 @@ namespace Patcher
                         Version = "2019.3.0f6",
                         DarkPattern = new byte[] {0x85, 0xD5, 0x00, 0x00, 0x00, 0x8B, 0x03},
                         LightPattern = new byte[] {0x84, 0xD5, 0x00, 0x00, 0x00, 0x8B, 0x03}
+                    },
+                    new PatchInfo
+                    {
+                        Version = "2020.1",
+                        DarkPattern = new byte[] {0x75, 0x5E, 0x8B, 0x03, 0xEB},
+                        LightPattern = new byte[] {0x74, 0x5E, 0x8B, 0x03, 0xEB}
                     }
                 }.OrderByDescending(info => info.Version).ToList()
             },
