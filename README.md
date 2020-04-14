@@ -49,7 +49,7 @@ Currently, the following OS and Unity version combinations are supported:
 
 **MacOS**
 * 2019.1.0f2
-* 2019.3.0f6
+* 2019.3 (tested until 2019.3.9f1)
 
 If you don't specify a version, the patcher will choose a default version.
 
@@ -76,3 +76,6 @@ When running the patcher on Linux or MacOS, be sure to run the respective binari
 For example, on Linux you would run:
 
 `sudo ./linux-x64/Patcher -e=/path/to/Unity -t=dark -linux`
+
+NOTE:
+On MacOS Unity might be displaying a mix of Dark and Light Themes after patching. This can be resolved by restarting Unity. After restarting Unity the Theme should display correctly.
