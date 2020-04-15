@@ -15,6 +15,12 @@ namespace Patcher
                 {
                     new PatchInfo
                     {
+                        Version = "2018.4",
+                        DarkPattern = new byte[] {0x75, 0x03, 0x41, 0x8B, 0x06, 0x4C, 0x3B},
+                        LightPattern = new byte[] {0x74, 0x03, 0x41, 0x8B, 0x06, 0x4C, 0x3B}
+                    },
+                    new PatchInfo
+                    {
                         Version = "2019.1.0f2",
                         DarkPattern = new byte[] {0x75, 0x03, 0x41, 0x8b, 0x06, 0x48},
                         LightPattern = new byte[] {0x74, 0x03, 0x41, 0x8b, 0x06, 0x48}
