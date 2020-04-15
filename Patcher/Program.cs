@@ -232,10 +232,9 @@ namespace Patcher
                 if (backupFileInfo.Exists)
                     backupFileInfo.Delete();
 
-                using (var backupWriteStream = backupFileInfo.OpenWrite())
-                {
-                    backupWriteStream.Write(ms.ToArray(), 0, (int) ms.Length);
-                }
+                using var backupWriteStream = backupFileInfo.OpenWrite();
+
+                backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
 
                 if (backupFileInfo.Exists)
                     Console.WriteLine($"Backup '{backupFileInfo.Name}' created.");
