@@ -19,13 +19,13 @@ at `C:\Program Files\Unity\Editor\Unity.exe`, which is obviously wrong for both 
 
 You can pass various arguments to the patcher:
 
-* `exe=|e=` to specify the location of the Unity executable
-* `theme=|t=` to set the theme, currently only `light` or `dark` are valid
-* `help|h` to display the options the patcher supports
+* `exe=` or `e=` to specify the location of the Unity executable
+* `theme=` or `t=` to set the theme, currently only `light` or `dark` are valid
+* `help` or `h` to display the options the patcher supports
 * `--windows` for Windows builds of Unity
 * `--linux` for Linux builds of Unity
 * `--mac` for MacOS builds of Unity
-* `--force|--f` to gently apply force
+* `--force` or `--f` to gently apply force
 
 Depending on your system, looking up the offsets to patch can take a couple moments.
 
@@ -74,7 +74,11 @@ When running the patcher on Linux or MacOS, be sure to run the respective binari
 
 For example, on Linux you would run:
 
-`sudo ./linux-x64/Patcher -e=/path/to/Unity -t=dark -linux`
+`sudo ./linux-x64/Patcher -e=/path/to/Unity --t=dark --linux`
+
+or on Mac:
+
+`sudo ./osx-64/Patcher -e=/Applications/Unity/Hub/Editor/VERSION/Unity.app/Contents/MacOS/Unity --mac --t=dark`
 
 NOTE:
 On MacOS Unity might be displaying a mix of Dark and Light Themes after patching. This can be resolved by restarting Unity. After restarting Unity the Theme should display correctly.
