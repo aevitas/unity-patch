@@ -49,6 +49,25 @@ namespace Patcher
                 {
                     new PatchInfo
                     {
+                        Version = "2018.2",
+                        LightPattern = new byte[] {0x75, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30},
+                        DarkPattern = new byte[] {0x74, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30}
+                    },
+                    new PatchInfo
+                    {
+                        Version = "2018.3",
+                        LightPattern = new byte[] {0x75, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30},
+                        DarkPattern = new byte[] {0x74, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30}
+                    },
+
+                    new PatchInfo
+                    {
+                        Version = "2018.4",
+                        LightPattern = new byte[] {0x75, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30},
+                        DarkPattern = new byte[] {0x74, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30}
+                    },
+                    new PatchInfo
+                    {
                         Version = "2019.3.2f1",
                         LightPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
                         DarkPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
@@ -167,7 +186,8 @@ namespace Patcher
 
             if (string.IsNullOrWhiteSpace(os))
             {
-                Console.WriteLine($"No OS was specified - please specify a valid operating system when running the patcher. See patcher -h for available options.");
+                Console.WriteLine(
+                    "No OS was specified - please specify a valid operating system when running the patcher. See patcher -h for available options.");
                 return;
             }
 
@@ -212,10 +232,9 @@ namespace Patcher
                 if (backupFileInfo.Exists)
                     backupFileInfo.Delete();
 
-                using (var backupWriteStream = backupFileInfo.OpenWrite())
-                {
-                    backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
-                }
+                using var backupWriteStream = backupFileInfo.OpenWrite();
+
+                backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
 
                 if (backupFileInfo.Exists)
                     Console.WriteLine($"Backup '{backupFileInfo.Name}' created.");
@@ -235,27 +254,29 @@ namespace Patcher
                     Console.WriteLine("Error: Could not find the theme offset in the specified executable!");
                     return;
                 }
+
                 var foundMultipleOffsets = offsets.Count > 1;
                 if (foundMultipleOffsets)
                 {
-                    Console.WriteLine($"Warning: Found more than one occurrence of the theme offset in the specified executable. There is a chance that patching it leads to undefined behaviour. It could also just work fine.{Environment.NewLine}{Environment.NewLine}");
-                    Console.WriteLine("Run the patcher with the --force option if you want to patch regardless of this warning.");
+                    Console.WriteLine(
+                        $"Warning: Found more than one occurrence of the theme offset in the specified executable. There is a chance that patching it leads to undefined behaviour. It could also just work fine.{Environment.NewLine}{Environment.NewLine}");
+                    Console.WriteLine(
+                        "Run the patcher with the --force option if you want to patch regardless of this warning.");
 
                     if (!force)
                         return;
                 }
+
                 var themeBytes = themeName == "dark" ? patch.DarkPattern : patch.LightPattern;
 
                 Console.WriteLine($"Patching to {themeName}...");
 
                 foreach (var offset in offsets)
-                {
-                    for (int i = 0; i < themeBytes.Length; i++)
+                    for (var i = 0; i < themeBytes.Length; i++)
                     {
                         fs.Position = offset + i;
                         fs.WriteByte(themeBytes[i]);
                     }
-                }
 
                 Console.WriteLine("Unity was successfully patched. Enjoy!");
             }
