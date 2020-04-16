@@ -3,16 +3,19 @@
 Unity Patch
 ===========
 
-This repository contains a patch for Unity that allows you to set options inacessible from the application's menus.
+This repository contains a patch for Unity that allows you to set options inaccessible from the application's menus.
 
 Currently, the only supported option for the patch is switching between the dark and light themes in Unity.
 
 Usage
 =====
 
-We provide binaries for Windows 10, Linux, and macOSX. All compiled binaries are x64. See the [release section](https://github.com/aevitas/unity-patch/releases). Alternatively, you can build the patch from source.
+We provide binaries for Windows 10, Linux, and macOS. All compiled binaries are x64.
+See the [release section](https://github.com/aevitas/unity-patch/releases).
+Alternatively, you can build the patch from source.
 
-Run `patcher.exe` on windows, or alternatively `Patcher` on Linux or MacOS. By default, it will locate your Unity install at `C:\Program Files\Unity\Editor\Unity.exe`, which is obviously wrong for both Linux and macOS, and it will set your theme to dark.
+Run `patcher.exe` on windows, or alternatively `Patcher` on Linux or MacOS. By default, it will locate your Unity install
+at `C:\Program Files\Unity\Editor\Unity.exe`, which is obviously wrong for both Linux and macOS, and it will set your theme to dark.
 
 You can pass various arguments to the patcher:
 
@@ -39,18 +42,13 @@ patcher.exe --windows --version=2020.1 --t=dark
 
 Currently, the following OS and Unity version combinations are supported:
 
-**Windows**
-* 2020.1
-* 2019.3
-* 2019.2.3f1
-
-**Linux**
-* 2019.2.3f
-
-**MacOS**
-* 2019.1.0f2
-* 2019.3 (tested until 2019.3.9f1)
-* 2020.1
+|        | Windows            | MacOS              | Linux              |
+|--------|:------------------:|:------------------:|:------------------:|
+| 2020.1 | :white_check_mark: | :white_check_mark: |         :x:        |
+| 2019.3 | :white_check_mark: | :white_check_mark: |         :x:        |
+| 2019.2 | :white_check_mark: |         :x:        | :white_check_mark: |
+| 2019.1 |         :x:        | :white_check_mark: |         :x:        | 
+| 2018.4 |         :x:        | :white_check_mark: |         :x:        |
 
 If you don't specify a version, the patcher will choose a default version.
 
