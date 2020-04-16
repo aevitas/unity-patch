@@ -248,10 +248,7 @@ namespace Patcher
         
         private static IEnumerable<int> FindPattern(byte[] needle, byte[] haystack)
         {
-            // This is very slow, especially on 75MB size binaries. But it's also 3 lines of code, and I hate code so less code is better.
-            for (var i = 0; i < haystack.Length; i++)
-                if (haystack.Skip(i).Take(needle.Length).SequenceEqual(needle))
-                    yield return i;
+            return new BinarySearcher(needle).Search(haystack).ToArray();
         }
     }
 }
