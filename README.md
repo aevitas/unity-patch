@@ -48,7 +48,9 @@ Currently, the following OS and Unity version combinations are supported:
 | 2019.3 | :white_check_mark: | :white_check_mark: |         :x:        |
 | 2019.2 | :white_check_mark: |         :x:        | :white_check_mark: |
 | 2019.1 |         :x:        | :white_check_mark: |         :x:        | 
-| 2018.4 |         :x:        | :white_check_mark: |         :x:        |
+| 2018.4 | :white_check_mark: | :white_check_mark: |         :x:        |
+| 2018.3 | :white_check_mark: |         :x:        |         :x:        |
+| 2018.2 | :white_check_mark: |         :x:        |         :x:        |
 
 If you don't specify a version, the patcher will choose a default version.
 
