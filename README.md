@@ -78,7 +78,7 @@ For example, on Linux you would run:
 
 or on Mac:
 
-`sudo ./osx-64/Patcher -e=/Applications/Unity/Hub/Editor/VERSION/Unity.app/Contents/MacOS/Unity --mac --t=dark`
+`sudo ./osx-64/Patcher -e=/Applications/Unity/Hub/Editor/<VERSION>/Unity.app/Contents/MacOS/Unity --mac --t=dark`
 
 **NOTE:**
 On MacOS Unity might be displaying a mix of Dark and Light Themes after patching. This can be resolved by restarting Unity. After restarting Unity the Theme should display correctly.
