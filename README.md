@@ -52,7 +52,7 @@ Currently, the following OS and Unity version combinations are supported:
 | 2018.3 | :white_check_mark: |         :x:        |         :x:        |
 | 2018.2 | :white_check_mark: |         :x:        |         :x:        |
 
-If you don't specify a version, the patcher will choose a default version.
+If you don't specify a version, the patcher will select the most recent version for your operating system.
 
 Troubleshooting
 ===============
