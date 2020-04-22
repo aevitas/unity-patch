@@ -5,23 +5,41 @@ namespace Patcher
     using System.IO;
     using System.Text.RegularExpressions;
 
+    /// <summary>
+    /// Represents an Unity Installation on the Disk. 
+    /// </summary>
     public class UnityInstallation
     {
         private readonly string _installationLocation;
 
-        public UnityInstallation(string installationLocation)
+        private readonly OperatingSystem _operatingSystem;
+
+        /// <summary>
+        /// Creates a new Unity installation
+        /// </summary>
+        /// <param name="installationLocation">The Path to this specific installation on the File System</param>
+        /// <param name="operatingSystem"></param>
+        public UnityInstallation(string installationLocation, OperatingSystem operatingSystem)
         {
             _installationLocation = installationLocation;
+            _operatingSystem = operatingSystem;
         }
 
+        /// <summary>
+        /// The Version of the Unity Installation
+        /// </summary>
         public string Version => Path.GetFileName(_installationLocation);
 
-        public string ExecutablePath(OperatingSystem os) => Path.Combine(this._installationLocation, os switch
+        /// <summary>
+        /// Gets the Path to the Unity executable on the disk.
+        /// </summary>
+        /// <returns></returns>
+        public string ExecutablePath() => Path.Combine(_installationLocation, _operatingSystem switch
         {
             OperatingSystem.Windows => @"Editor\Unity.exe",
             OperatingSystem.MacOS => "Unity.app/Contents/MacOS/Unity",
             OperatingSystem.Linux => "Unity",
-            _ => throw new ArgumentOutOfRangeException(nameof(os))
+            _ => throw new ArgumentOutOfRangeException(nameof(_operatingSystem))
         });
 
         public bool IsSupported(IEnumerable<PatchInfo> patches)
@@ -51,7 +69,7 @@ namespace Patcher
                     OperatingSystem.Windows => @"C:\Program Files\Unity\Hub\Editor\",
                     OperatingSystem.MacOS => "/Applications/Unity/Hub/Editor",
                     OperatingSystem.Linux => "~/Unity/Hub/Editor",
-                    _ => throw new ArgumentOutOfRangeException("OS is not supported")
+                    _ => throw new ArgumentOutOfRangeException(nameof(operatingSystem))
                 };
 
                 if (Directory.Exists(path))
@@ -61,7 +79,7 @@ namespace Patcher
                     var installations = new UnityInstallation[directories.Length];
                     for (var i = 0; i < directories.Length; i++)
                     {
-                        installations[i] = new UnityInstallation(directories[i]);
+                        installations[i] = new UnityInstallation(directories[i], operatingSystem);
                     }
 
                     return installations;

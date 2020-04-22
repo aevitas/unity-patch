@@ -14,7 +14,7 @@ namespace Patcher
         {
             var themeName = string.Empty;
             var help = false;
-            UnityInstallation unityInstallation = null;
+            var fileLocation = string.Empty;
             var os = OperatingSystem.Unknown;
             var version = string.Empty;
             var force = false;
@@ -24,7 +24,7 @@ namespace Patcher
                 {"theme=|t=", "The theme to be applied to the Unity.", v => themeName = v},
                 {
                     "exe=|e=", "The location of the Unity Editor executable.",
-                    v => { unityInstallation = new UnityInstallation(v); }
+                    v => fileLocation = v
                 },
                 {
                     "mac", "Specifies if the specified binary is the MacOS version of Unity3D.",
@@ -116,12 +116,11 @@ namespace Patcher
 
             var patches = Patches.GetPatches(os);
 
-            var patch = unityInstallation?.GetPatch(patches);
+            var patch = patches.FirstOrDefault(p => p.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
 
-            if (unityInstallation == null)
+            if (string.IsNullOrEmpty(fileLocation))
             {
                 // https://docs.unity3d.com/Manual/GettingStartedInstallingHub.html
-
                 var unityInstallations = UnityInstallation.GetUnityInstallations(os);
 
                 Console.WriteLine("Please choose the editor which should get patched:");
@@ -132,7 +131,7 @@ namespace Patcher
                         return $"{installation.Version}\t({supported})";
                     });
 
-                unityInstallation = selectedInstallation;
+                fileLocation = selectedInstallation.ExecutablePath();
                 version = selectedInstallation.Version;
                 patch = selectedInstallation.GetPatch(patches);
 
@@ -155,11 +154,11 @@ namespace Patcher
                 Console.WriteLine($"Applying Patch for {patch.Version}");
             }
 
-            Console.WriteLine($"Opening Unity executable from {unityInstallation.ExecutablePath(os)}...");
+            Console.WriteLine($"Opening Unity executable from {fileLocation}...");
 
             try
             {
-                var fileInfo = new FileInfo(unityInstallation.ExecutablePath(os));
+                var fileInfo = new FileInfo(fileLocation);
 
                 if (!fileInfo.Exists)
                 {
