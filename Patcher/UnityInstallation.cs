@@ -11,10 +11,10 @@ namespace Patcher
 
         public UnityInstallation(string installationLocation)
         {
-            this._installationLocation = installationLocation;
+            _installationLocation = installationLocation;
         }
 
-        public string Version => Path.GetFileName(this._installationLocation);
+        public string Version => Path.GetFileName(_installationLocation);
 
         public string ExecutablePath(OperatingSystem os) => Path.Combine(this._installationLocation, os switch
         {
@@ -23,10 +23,10 @@ namespace Patcher
             OperatingSystem.Linux => "Unity",
             _ => throw new ArgumentOutOfRangeException(nameof(os))
         });
-        
+
         public bool IsSupported(IEnumerable<PatchInfo> patches)
         {
-            return this.GetPatch(patches) != null;
+            return GetPatch(patches) != null;
         }
 
         public PatchInfo GetPatch(IEnumerable<PatchInfo> patches)
