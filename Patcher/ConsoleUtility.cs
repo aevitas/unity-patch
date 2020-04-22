@@ -3,8 +3,21 @@ namespace Patcher
     using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Utility methods for interacting with the console.
+    /// </summary>
     public static class ConsoleUtility
     {
+        /// <summary>
+        /// Displays a selection menu in the console to the user which can be navigated using the arrow keys and enter
+        /// to select the desired option from the list.
+        /// </summary>
+        /// <param name="options">The list of options from which the user can choose</param>
+        /// <param name="optionLine">
+        /// A function taking one of the options an returning a string representation of how it should be displayed to the user
+        /// </param>
+        /// <typeparam name="T">The type of a single option</typeparam>
+        /// <returns>The selected option from the list</returns>
         public static T ShowSelectionMenu<T>(List<T> options, Func<T, string> optionLine)
         {
             int selected = 0;
