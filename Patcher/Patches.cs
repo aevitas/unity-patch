@@ -10,13 +10,25 @@ namespace Patcher
         {
             new PatchInfo
             {
-                Version = "2019.3.2f1",
-                LightPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
-                DarkPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
+                Version = "2018.2",
+                LightPattern = new byte[] {0x75, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30},
+                DarkPattern = new byte[] {0x74, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30}
             },
             new PatchInfo
             {
-                Version = "2019.2.3f1",
+                Version = "2018.3",
+                LightPattern = new byte[] {0x75, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30},
+                DarkPattern = new byte[] {0x74, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30}
+            },
+            new PatchInfo
+            {
+                Version = "2018.4",
+                LightPattern = new byte[] {0x75, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30},
+                DarkPattern = new byte[] {0x74, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30}
+            },
+            new PatchInfo
+            {
+                Version = "2019.2",
                 LightPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
                 DarkPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
             },
@@ -36,6 +48,12 @@ namespace Patcher
         
         private static readonly List<PatchInfo> MacPatches = new List<PatchInfo>
         {
+            new PatchInfo
+            {
+                Version = "2018.4",
+                DarkPattern = new byte[] {0x75, 0x03, 0x41, 0x8B, 0x06, 0x4C, 0x3B},
+                LightPattern = new byte[] {0x74, 0x03, 0x41, 0x8B, 0x06, 0x4C, 0x3B}
+            },
             new PatchInfo
             {
                 Version = "2019.1.0f2",

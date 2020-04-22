@@ -186,10 +186,10 @@ namespace Patcher
             if (backupFileInfo.Exists)
                 backupFileInfo.Delete();
 
-            using (var backupWriteStream = backupFileInfo.OpenWrite())
-            {
+            using var backupWriteStream = backupFileInfo.OpenWrite();
+            
                 backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
-            }
+            
 
             if (backupFileInfo.Exists)
                 Console.WriteLine($"Backup '{backupFileInfo.Name}' created.");
@@ -231,13 +231,13 @@ namespace Patcher
             Console.WriteLine($"Patching to {themeName}...");
 
             foreach (var offset in offsets)
-            {
-                for (int i = 0; i < themeBytes.Length; i++)
+            
+                for (var i = 0; i < themeBytes.Length; i++)
                 {
                     fs.Position = offset + i;
                     fs.WriteByte(themeBytes[i]);
                 }
-            }
+            
 
             Console.WriteLine("Unity was successfully patched. Enjoy!");
         }

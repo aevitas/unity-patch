@@ -3,26 +3,29 @@
 Unity Patch
 ===========
 
-This repository contains a patch for Unity that allows you to set options inacessible from the application's menus.
+This repository contains a patch for Unity that allows you to set options inaccessible from the application's menus.
 
 Currently, the only supported option for the patch is switching between the dark and light themes in Unity.
 
 Usage
 =====
 
-We provide binaries for Windows 10, Linux, and macOSX. All compiled binaries are x64. See the [release section](https://github.com/aevitas/unity-patch/releases). Alternatively, you can build the patch from source.
+We provide binaries for Windows 10, Linux, and macOS. All compiled binaries are x64.
+See the [release section](https://github.com/aevitas/unity-patch/releases).
+Alternatively, you can build the patch from source.
 
-Run `patcher.exe` on windows, or alternatively `Patcher` on Linux or MacOS. By default, it will locate your Unity install at `C:\Program Files\Unity\Editor\Unity.exe`, which is obviously wrong for both Linux and macOS, and it will set your theme to dark.
+Run `patcher.exe` on windows, or alternatively `Patcher` on Linux or MacOS. By default, it will locate your Unity install
+at `C:\Program Files\Unity\Editor\Unity.exe`, which is obviously wrong for both Linux and macOS, and it will set your theme to dark.
 
 You can pass various arguments to the patcher:
 
-* `exe=|e=` to specify the location of the Unity executable
-* `theme=|t=` to set the theme, currently only `light` or `dark` are valid
-* `help|h` to display the options the patcher supports
+* `exe=` or `e=` to specify the location of the Unity executable
+* `theme=` or `t=` to set the theme, currently only `light` or `dark` are valid
+* `help` or `h` to display the options the patcher supports
 * `--windows` for Windows builds of Unity
 * `--linux` for Linux builds of Unity
 * `--mac` for MacOS builds of Unity
-* `--force|--f` to gently apply force
+* `--force` or `--f` to gently apply force
 
 Depending on your system, looking up the offsets to patch can take a couple moments.
 
@@ -39,20 +42,17 @@ patcher.exe --windows --version=2020.1 --t=dark
 
 Currently, the following OS and Unity version combinations are supported:
 
-**Windows**
-* 2020.1
-* 2019.3
-* 2019.2.3f1
+|        | Windows            | MacOS              | Linux              |
+|--------|:------------------:|:------------------:|:------------------:|
+| 2020.1 | :white_check_mark: | :white_check_mark: |         :x:        |
+| 2019.3 | :white_check_mark: | :white_check_mark: |         :x:        |
+| 2019.2 | :white_check_mark: |         :x:        | :white_check_mark: |
+| 2019.1 |         :x:        | :white_check_mark: |         :x:        | 
+| 2018.4 | :white_check_mark: | :white_check_mark: |         :x:        |
+| 2018.3 | :white_check_mark: |         :x:        |         :x:        |
+| 2018.2 | :white_check_mark: |         :x:        |         :x:        |
 
-**Linux**
-* 2019.2.3f
-
-**MacOS**
-* 2019.1.0f2
-* 2019.3 (tested until 2019.3.9f1)
-* 2020.1
-
-If you don't specify a version, the patcher will choose a default version.
+If you don't specify a version, the patcher will select the most recent version for your operating system.
 
 Troubleshooting
 ===============
@@ -76,7 +76,13 @@ When running the patcher on Linux or MacOS, be sure to run the respective binari
 
 For example, on Linux you would run:
 
-`sudo ./linux-x64/Patcher -e=/path/to/Unity -t=dark -linux`
+`sudo ./linux-x64/Patcher -e=/path/to/Unity --t=dark --linux`
 
-NOTE:
+or on Mac:
+
+`sudo ./osx-64/Patcher -e=/Applications/Unity/Hub/Editor/<VERSION>/Unity.app/Contents/MacOS/Unity --mac --t=dark`
+
+**NOTE:**
 On MacOS Unity might be displaying a mix of Dark and Light Themes after patching. This can be resolved by restarting Unity. After restarting Unity the Theme should display correctly.
+
+If you get `command not found`, try changing permissions for the file by running `chmod +x Patcher`. If running the patcher again gives you the following error `Can not patch the specified file - it is marked as read only!` then you need to check Unity to ensure you have write permissions for the `Unity.app` file as well.
