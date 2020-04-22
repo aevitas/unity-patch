@@ -42,7 +42,7 @@ namespace Patcher
             return null;
         }
 
-        public static UnityInstallation[] GetUnityInstallations(OperatingSystem operatingSystem)
+        public static IEnumerable<UnityInstallation> GetUnityInstallations(OperatingSystem operatingSystem)
         {
             try
             {

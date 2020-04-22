@@ -7,7 +7,6 @@ using NDesk.Options;
 namespace Patcher
 {
     using System.Runtime.InteropServices;
-    using System.Text.RegularExpressions;
 
     internal static class Program
     {
@@ -15,7 +14,7 @@ namespace Patcher
         {
             var themeName = string.Empty;
             var help = false;
-            var fileLocation = string.Empty;
+            UnityInstallation unityInstallation = null;
             var os = OperatingSystem.Unknown;
             var version = string.Empty;
             var force = false;
@@ -23,7 +22,10 @@ namespace Patcher
             var optionSet = new OptionSet
             {
                 {"theme=|t=", "The theme to be applied to the Unity.", v => themeName = v},
-                {"exe=|e=", "The location of the Unity Editor executable.", v => fileLocation = v},
+                {
+                    "exe=|e=", "The location of the Unity Editor executable.",
+                    v => { unityInstallation = new UnityInstallation(v); }
+                },
                 {
                     "mac", "Specifies if the specified binary is the MacOS version of Unity3D.",
                     v =>
@@ -113,28 +115,32 @@ namespace Patcher
             }
 
             var patches = Patches.GetPatches(os);
-            
-            var patch = patches.FirstOrDefault(p => Regex.IsMatch(version, p.Version));
-            
-            if (string.IsNullOrEmpty(fileLocation))
+
+            var patch = unityInstallation?.GetPatch(patches);
+
+            if (unityInstallation == null)
             {
                 // https://docs.unity3d.com/Manual/GettingStartedInstallingHub.html
 
                 var unityInstallations = UnityInstallation.GetUnityInstallations(os);
 
                 Console.WriteLine("Please choose the editor which should get patched:");
-                for (int index = 0; index < unityInstallations.Length; index++)
+                UnityInstallation selectedInstallation = ConsoleUtility.ShowSelectionMenu(unityInstallations.ToList(),
+                    installation =>
+                    {
+                        var supported = installation.IsSupported(patches) ? "Supported" : "Unsupported";
+                        return $"{installation.Version}\t({supported})";
+                    });
+
+                unityInstallation = selectedInstallation;
+                version = selectedInstallation.Version;
+                patch = selectedInstallation.GetPatch(patches);
+
+                if (patch == null)
                 {
-                    var installation = unityInstallations[index];
-                    var supported = installation.IsSupported(patches) ? "Supported" : "Unsupported";
-                    Console.WriteLine($"{index}: {installation.Version} ({supported})");
+                    Console.WriteLine("Couldn't find Patch for specified Unity Installation, please choose one:");
+                    patch = ConsoleUtility.ShowSelectionMenu(patches, patchInfo => patchInfo.Version);
                 }
-
-                int.TryParse(Console.ReadLine(), out int selectedEditor);
-
-                version = unityInstallations[selectedEditor].Version;
-                fileLocation = unityInstallations[selectedEditor].ExecutablePath(os);
-                patch = unityInstallations[selectedEditor].GetPatch(patches);
             }
 
             if (patch == null)
@@ -149,11 +155,11 @@ namespace Patcher
                 Console.WriteLine($"Applying Patch for {patch.Version}");
             }
 
-            Console.WriteLine($"Opening Unity executable from {fileLocation}...");
+            Console.WriteLine($"Opening Unity executable from {unityInstallation.ExecutablePath(os)}...");
 
             try
             {
-                var fileInfo = new FileInfo(fileLocation);
+                var fileInfo = new FileInfo(unityInstallation.ExecutablePath(os));
 
                 if (!fileInfo.Exists)
                 {
@@ -200,7 +206,8 @@ namespace Patcher
                 Console.WriteLine($"Backup '{backupFileInfo.Name}' created.");
         }
 
-        private static void PatchExecutable(MemoryStream ms, FileStream fs, PatchInfo patch, string themeName, bool force)
+        private static void PatchExecutable(MemoryStream ms, FileStream fs, PatchInfo patch, string themeName,
+            bool force)
         {
             Console.WriteLine("Searching for theme offset...");
 
@@ -245,7 +252,7 @@ namespace Patcher
 
             Console.WriteLine("Unity was successfully patched. Enjoy!");
         }
-        
+
         private static IEnumerable<int> FindPattern(byte[] needle, byte[] haystack)
         {
             return new BinarySearcher(needle).Search(haystack).ToArray();
