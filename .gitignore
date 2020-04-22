@@ -260,3 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 /Patcher/Properties/launchSettings.json
+
+# macOS
+.DS_Store
