@@ -94,19 +94,8 @@ namespace Patcher
 
             if (os == OperatingSystem.Unknown)
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    os = OperatingSystem.Windows;
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    os = OperatingSystem.MacOS;
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    os = OperatingSystem.Linux;
-                }
-                else
+                os = DetectOperatingSystem();
+                if (os == OperatingSystem.Unknown)
                 {
                     Console.WriteLine(
                         "Failed to detect OS and non was specified - please specify a valid operating system. See patcher -h for available options.");
@@ -133,7 +122,8 @@ namespace Patcher
 
                 fileLocation = selectedInstallation.ExecutablePath();
                 version = selectedInstallation.Version;
-                patch = selectedInstallation.GetPatch(patches);
+
+                patch ??= selectedInstallation.GetPatch(patches);
 
                 if (patch == null)
                 {
@@ -255,6 +245,26 @@ namespace Patcher
         private static IEnumerable<int> FindPattern(byte[] needle, byte[] haystack)
         {
             return new BinarySearcher(needle).Search(haystack).ToArray();
+        }
+
+        private static OperatingSystem DetectOperatingSystem()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return OperatingSystem.Windows;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return OperatingSystem.MacOS;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return OperatingSystem.Linux;
+            }
+
+            return OperatingSystem.Unknown;
         }
     }
 }
