@@ -21,7 +21,7 @@ namespace Patcher
         /// <param name="operatingSystem"></param>
         public UnityInstallation(string installationLocation, OperatingSystem operatingSystem)
         {
-            _installationLocation = installationLocation;
+            _installationLocation = installationLocation ?? throw new ArgumentNullException(nameof(installationLocation));
             _operatingSystem = operatingSystem;
         }
 
@@ -51,7 +51,7 @@ namespace Patcher
         {
             foreach (PatchInfo patch in patches)
             {
-                if (Regex.IsMatch(this.Version, patch.Version))
+                if (Regex.IsMatch(Version, patch.Version))
                 {
                     return patch;
                 }
@@ -62,37 +62,22 @@ namespace Patcher
 
         public static IEnumerable<UnityInstallation> GetUnityInstallations(OperatingSystem operatingSystem)
         {
-            try
+            var path = operatingSystem switch
             {
-                var path = operatingSystem switch
-                {
-                    OperatingSystem.Windows => @"C:\Program Files\Unity\Hub\Editor\",
-                    OperatingSystem.MacOS => "/Applications/Unity/Hub/Editor",
-                    OperatingSystem.Linux => "~/Unity/Hub/Editor",
-                    _ => throw new ArgumentOutOfRangeException(nameof(operatingSystem))
-                };
+                OperatingSystem.Windows => @"C:\Program Files\Unity\Hub\Editor\",
+                OperatingSystem.MacOS => "/Applications/Unity/Hub/Editor",
+                OperatingSystem.Linux => "~/Unity/Hub/Editor",
+                _ => throw new ArgumentOutOfRangeException(nameof(operatingSystem))
+            };
 
-                if (Directory.Exists(path))
-                {
-                    var directories = Directory.GetDirectories(path);
-                    Array.Sort(directories);
-                    var installations = new UnityInstallation[directories.Length];
-                    for (var i = 0; i < directories.Length; i++)
-                    {
-                        installations[i] = new UnityInstallation(directories[i], operatingSystem);
-                    }
-
-                    return installations;
-                }
-            }
-            catch (UnauthorizedAccessException)
+            if (!Directory.Exists(path)) yield break;
+            
+            var directories = Directory.GetDirectories(path);
+            Array.Sort(directories);
+            foreach (string directory in directories)
             {
-                Console.WriteLine(
-                    "Could not open the Unity executable - are you running the patcher as an administrator?");
-                throw;
+                yield return new UnityInstallation(directory, operatingSystem);
             }
-
-            return new UnityInstallation[0];
         }
     }
 }
