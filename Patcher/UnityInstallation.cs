@@ -1,10 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
+
 namespace Patcher
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Text.RegularExpressions;
-
     /// <summary>
     /// Represents an Unity Installation on the Disk. 
     /// </summary>

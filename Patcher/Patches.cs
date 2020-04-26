@@ -1,9 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Patcher
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public static class Patches
     {
         private static readonly List<PatchInfo> WindowsPatches = new List<PatchInfo>

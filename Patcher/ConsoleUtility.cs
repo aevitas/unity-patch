@@ -1,8 +1,8 @@
+using System;
+using System.Collections.Generic;
+
 namespace Patcher
 {
-    using System;
-    using System.Collections.Generic;
-
     /// <summary>
     /// Utility methods for interacting with the console.
     /// </summary>

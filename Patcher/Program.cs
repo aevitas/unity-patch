@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NDesk.Options;
+using System.Runtime.InteropServices;
 
 namespace Patcher
 {
-    using System.Runtime.InteropServices;
-
     internal static class Program
     {
         internal static void Main(string[] args)

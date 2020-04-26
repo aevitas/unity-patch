@@ -1,8 +1,8 @@
+using System;
+using System.Collections.Generic;
+
 namespace Patcher
 {
-    using System;
-    using System.Collections.Generic;
-
     /// <summary>
     /// Original by Matthew Watson from https://stackoverflow.com/questions/37500629/find-byte-sequence-within-a-byte-array
     /// </summary>
