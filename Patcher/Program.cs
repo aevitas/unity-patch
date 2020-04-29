@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using NDesk.Options;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 
 namespace Patcher
 {
@@ -11,12 +12,17 @@ namespace Patcher
     {
         internal static void Main(string[] args)
         {
-            var themeName = string.Empty;
+            var options = new PatcherOptions();
+            var optionsFile = new FileInfo("options.json");
+            if (optionsFile.Exists)
+                options = JsonSerializer.Deserialize<PatcherOptions>(File.ReadAllText(optionsFile.FullName));
+
+            var themeName = options.ThemeName ?? string.Empty;
             var help = false;
-            var fileLocation = string.Empty;
-            var os = OperatingSystem.Unknown;
-            var version = string.Empty;
-            var force = false;
+            var fileLocation = options.FileLocation ?? string.Empty;
+            var os = options.OperatingSystem ?? OperatingSystem.Unknown;
+            var version = options.Version ?? string.Empty;
+            var force = options.Force ?? false;
 
             var optionSet = new OptionSet
             {
@@ -186,10 +192,9 @@ namespace Patcher
                 backupFileInfo.Delete();
 
             using var backupWriteStream = backupFileInfo.OpenWrite();
-            
-                backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
-            
 
+            backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
+            
             if (backupFileInfo.Exists)
                 Console.WriteLine($"Backup '{backupFileInfo.Name}' created.");
         }
@@ -230,13 +235,13 @@ namespace Patcher
             Console.WriteLine($"Patching to {themeName}...");
 
             foreach (var offset in offsets)
-            
+
                 for (var i = 0; i < themeBytes.Length; i++)
                 {
                     fs.Position = offset + i;
                     fs.WriteByte(themeBytes[i]);
                 }
-            
+
 
             Console.WriteLine("Unity was successfully patched. Enjoy!");
         }
