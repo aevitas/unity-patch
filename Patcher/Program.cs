@@ -3,129 +3,48 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NDesk.Options;
+using System.Runtime.InteropServices;
 
 namespace Patcher
 {
-    internal class Program
+    internal static class Program
     {
-        private static readonly Dictionary<string, List<PatchInfo>> Patches = new Dictionary<string, List<PatchInfo>>
-        {
-            {
-                "mac", new List<PatchInfo>
-                {
-                    new PatchInfo
-                    {
-                        Version = "2018.4",
-                        DarkPattern = new byte[] {0x75, 0x03, 0x41, 0x8B, 0x06, 0x4C, 0x3B},
-                        LightPattern = new byte[] {0x74, 0x03, 0x41, 0x8B, 0x06, 0x4C, 0x3B}
-                    },
-                    new PatchInfo
-                    {
-                        Version = "2019.1.0f2",
-                        DarkPattern = new byte[] {0x75, 0x03, 0x41, 0x8b, 0x06, 0x48},
-                        LightPattern = new byte[] {0x74, 0x03, 0x41, 0x8b, 0x06, 0x48}
-                    },
-                    new PatchInfo
-                    {
-                        Version = "2019.3.0f6",
-                        DarkPattern = new byte[] {0x85, 0xD5, 0x00, 0x00, 0x00, 0x8B, 0x03},
-                        LightPattern = new byte[] {0x84, 0xD5, 0x00, 0x00, 0x00, 0x8B, 0x03}
-                    },
-                    new PatchInfo
-                    {
-                        Version = "2020.1",
-                        DarkPattern = new byte[] {0x75, 0x5E, 0x8B, 0x03, 0xEB},
-                        LightPattern = new byte[] {0x74, 0x5E, 0x8B, 0x03, 0xEB}
-                    }
-                }.OrderByDescending(info => info.Version).ToList()
-            },
-            {
-                "linux", new List<PatchInfo>
-                {
-                    new PatchInfo
-                    {
-                        Version = "2019.2.3f",
-                        DarkPattern = new byte[] {0x75, 0x02, 0x8b, 0x03, 0x48, 0x83},
-                        LightPattern = new byte[] {0x74, 0x02, 0x8b, 0x03, 0x48, 0x83}
-                    }
-                }.OrderByDescending(info => info.Version).ToList()
-            },
-            {
-                "windows", new List<PatchInfo>
-                {
-                    new PatchInfo
-                    {
-                        Version = "2018.2",
-                        LightPattern = new byte[] {0x75, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30},
-                        DarkPattern = new byte[] {0x74, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30}
-                    },
-                    new PatchInfo
-                    {
-                        Version = "2018.3",
-                        LightPattern = new byte[] {0x75, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30},
-                        DarkPattern = new byte[] {0x74, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30}
-                    },
-
-                    new PatchInfo
-                    {
-                        Version = "2018.4",
-                        LightPattern = new byte[] {0x75, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30},
-                        DarkPattern = new byte[] {0x74, 0x08, 0x33, 0xC0, 0x48, 0x83, 0xC4, 0x30}
-                    },
-                    new PatchInfo
-                    {
-                        Version = "2019.3.2f1",
-                        LightPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
-                        DarkPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
-                    },
-                    new PatchInfo
-                    {
-                        Version = "2019.2.3f1",
-                        LightPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
-                        DarkPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
-                    },
-                    new PatchInfo
-                    {
-                        Version = "2019.3",
-                        LightPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
-                        DarkPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
-                    },
-                    new PatchInfo
-                    {
-                        Version = "2020.1",
-                        LightPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
-                        DarkPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
-                    }
-                }.OrderByDescending(info => info.Version).ToList()
-            }
-        };
-
         internal static void Main(string[] args)
         {
             var themeName = string.Empty;
             var help = false;
-            var fileLocation = @"C:\Program Files\Unity\Hub\Editor\2019.3.2f1\Editor\Unity.exe";
-            var windows = false;
-            var mac = false;
-            var linux = false;
+            var fileLocation = string.Empty;
+            var os = OperatingSystem.Unknown;
             var version = string.Empty;
             var force = false;
 
             var optionSet = new OptionSet
             {
                 {"theme=|t=", "The theme to be applied to the Unity.", v => themeName = v},
-                {"exe=|e=", "The location of the Unity Editor executable.", v => fileLocation = v},
+                {
+                    "exe=|e=", "The location of the Unity Editor executable.",
+                    v => fileLocation = v
+                },
                 {
                     "mac", "Specifies if the specified binary is the MacOS version of Unity3D.",
-                    v => mac = v != null
+                    v =>
+                    {
+                        if (v != null) os = OperatingSystem.MacOS;
+                    }
                 },
                 {
                     "linux", "Specifies if the specified binary is the Linux version of Unity3D.",
-                    v => linux = v != null
+                    v =>
+                    {
+                        if (v != null) os = OperatingSystem.Linux;
+                    }
                 },
                 {
                     "windows", "Specifies if the specified binary is the Windows version of Unity3D.",
-                    v => windows = v != null
+                    v =>
+                    {
+                        if (v != null) os = OperatingSystem.Windows;
+                    }
                 },
                 {
                     "version=|v=", "The version of Unity to patch.", v => version = v
@@ -165,13 +84,6 @@ namespace Patcher
                 return;
             }
 
-            if (string.IsNullOrEmpty(fileLocation))
-            {
-                Console.WriteLine(
-                    "Please specify the path to the Unity executable, or leave it blank to use the default.");
-                return;
-            }
-
             if (help)
             {
                 Console.WriteLine("Usage: patcher.exe");
@@ -179,33 +91,56 @@ namespace Patcher
                 return;
             }
 
-            string os = null;
-
-            if (mac)
-                os = "mac";
-
-            if (linux)
-                os = "linux";
-
-            if (windows)
-                os = "windows";
-
-            if (string.IsNullOrWhiteSpace(os))
+            if (os == OperatingSystem.Unknown)
             {
-                Console.WriteLine(
-                    "No OS was specified - please specify a valid operating system when running the patcher. See patcher -h for available options.");
-                return;
+                os = DetectOperatingSystem();
+                if (os == OperatingSystem.Unknown)
+                {
+                    Console.WriteLine(
+                        "Failed to detect OS and non was specified - please specify a valid operating system. See patcher -h for available options.");
+                    return;
+                }
             }
 
-            var patch = Patches[os]
-                .FirstOrDefault(p => p.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
+            var patches = Patches.GetPatches(os);
+
+            var patch = patches.FirstOrDefault(p => p.Version.Equals(version, StringComparison.OrdinalIgnoreCase));
+
+            if (string.IsNullOrEmpty(fileLocation))
+            {
+                // https://docs.unity3d.com/Manual/GettingStartedInstallingHub.html
+                var unityInstallations = UnityInstallation.GetUnityInstallations(os);
+
+                Console.WriteLine("Please choose the editor which should get patched:");
+                UnityInstallation selectedInstallation = ConsoleUtility.ShowSelectionMenu(unityInstallations.ToList(),
+                    installation =>
+                    {
+                        var supported = installation.IsSupported(patches) ? "Supported" : "Unsupported";
+                        return $"{installation.Version}\t({supported})";
+                    });
+
+                fileLocation = selectedInstallation.ExecutablePath();
+                version = selectedInstallation.Version;
+
+                patch ??= selectedInstallation.GetPatch(patches);
+
+                if (patch == null)
+                {
+                    Console.WriteLine("Couldn't find Patch for specified Unity Installation, please choose one:");
+                    patch = ConsoleUtility.ShowSelectionMenu(patches, patchInfo => patchInfo.Version);
+                }
+            }
 
             if (patch == null)
             {
-                patch = Patches[os].First();
+                patch = patches.First();
                 Console.WriteLine(string.IsNullOrWhiteSpace(version)
                     ? $"Version not explicitly specified -- defaulting to version {patch.Version} for {os}"
                     : $"Could not find patch details for {os} Unity version {version} -- defaulting to version {patch.Version}.");
+            }
+            else
+            {
+                Console.WriteLine($"Applying Patch for {patch.Version}");
             }
 
             Console.WriteLine($"Opening Unity executable from {fileLocation}...");
@@ -231,60 +166,8 @@ namespace Patcher
 
                 fs.CopyTo(ms);
 
-                Console.WriteLine("Creating backup...");
-
-                var backupFileInfo = new FileInfo(fileInfo.FullName + ".bak");
-
-                if (backupFileInfo.Exists)
-                    backupFileInfo.Delete();
-
-                using var backupWriteStream = backupFileInfo.OpenWrite();
-
-                backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
-
-                if (backupFileInfo.Exists)
-                    Console.WriteLine($"Backup '{backupFileInfo.Name}' created.");
-
-                Console.WriteLine("Searching for theme offset...");
-
-                var buffer = ms.ToArray();
-
-                var lightOffsets = FindPattern(patch.LightPattern, buffer).ToArray();
-                var darkOffsets = FindPattern(patch.DarkPattern, buffer).ToArray();
-                var offsets = new HashSet<int>(lightOffsets);
-                offsets.UnionWith(darkOffsets);
-
-                var found = offsets.Any();
-                if (!found)
-                {
-                    Console.WriteLine("Error: Could not find the theme offset in the specified executable!");
-                    return;
-                }
-
-                var foundMultipleOffsets = offsets.Count > 1;
-                if (foundMultipleOffsets)
-                {
-                    Console.WriteLine(
-                        $"Warning: Found more than one occurrence of the theme offset in the specified executable. There is a chance that patching it leads to undefined behaviour. It could also just work fine.{Environment.NewLine}{Environment.NewLine}");
-                    Console.WriteLine(
-                        "Run the patcher with the --force option if you want to patch regardless of this warning.");
-
-                    if (!force)
-                        return;
-                }
-
-                var themeBytes = themeName == "dark" ? patch.DarkPattern : patch.LightPattern;
-
-                Console.WriteLine($"Patching to {themeName}...");
-
-                foreach (var offset in offsets)
-                    for (var i = 0; i < themeBytes.Length; i++)
-                    {
-                        fs.Position = offset + i;
-                        fs.WriteByte(themeBytes[i]);
-                    }
-
-                Console.WriteLine("Unity was successfully patched. Enjoy!");
+                CreateBackup(fileInfo, ms);
+                PatchExecutable(ms, fs, patch, themeName, force);
             }
             catch (UnauthorizedAccessException)
             {
@@ -293,21 +176,94 @@ namespace Patcher
             }
         }
 
-        private static IEnumerable<int> FindPattern(byte[] needle, byte[] haystack)
+        private static void CreateBackup(FileSystemInfo fileInfo, MemoryStream ms)
         {
-            // This is very slow, especially on 75MB size binaries. But it's also 3 lines of code, and I hate code so less code is better.
-            for (var i = 0; i < haystack.Length; i++)
-                if (haystack.Skip(i).Take(needle.Length).SequenceEqual(needle))
-                    yield return i;
+            Console.WriteLine("Creating backup...");
+
+            var backupFileInfo = new FileInfo(fileInfo.FullName + ".bak");
+
+            if (backupFileInfo.Exists)
+                backupFileInfo.Delete();
+
+            using var backupWriteStream = backupFileInfo.OpenWrite();
+            
+                backupWriteStream.Write(ms.ToArray(), 0, (int)ms.Length);
+            
+
+            if (backupFileInfo.Exists)
+                Console.WriteLine($"Backup '{backupFileInfo.Name}' created.");
         }
 
-        private class PatchInfo
+        private static void PatchExecutable(MemoryStream ms, FileStream fs, PatchInfo patch, string themeName,
+            bool force)
         {
-            public string Version { get; set; }
+            Console.WriteLine("Searching for theme offset...");
 
-            public byte[] DarkPattern { get; set; }
+            var buffer = ms.ToArray();
 
-            public byte[] LightPattern { get; set; }
+            var lightOffsets = FindPattern(patch.LightPattern, buffer).ToArray();
+            var darkOffsets = FindPattern(patch.DarkPattern, buffer).ToArray();
+            var offsets = new HashSet<int>(lightOffsets);
+            offsets.UnionWith(darkOffsets);
+
+            var found = offsets.Any();
+            if (!found)
+            {
+                Console.WriteLine("Error: Could not find the theme offset in the specified executable!");
+                return;
+            }
+
+            var foundMultipleOffsets = offsets.Count > 1;
+            if (foundMultipleOffsets)
+            {
+                Console.WriteLine(
+                    $"Warning: Found more than one occurrence of the theme offset in the specified executable. There is a chance that patching it leads to undefined behaviour. It could also just work fine.{Environment.NewLine}{Environment.NewLine}");
+                Console.WriteLine(
+                    "Run the patcher with the --force option if you want to patch regardless of this warning.");
+
+                if (!force)
+                    return;
+            }
+
+            var themeBytes = themeName == "dark" ? patch.DarkPattern : patch.LightPattern;
+
+            Console.WriteLine($"Patching to {themeName}...");
+
+            foreach (var offset in offsets)
+            
+                for (var i = 0; i < themeBytes.Length; i++)
+                {
+                    fs.Position = offset + i;
+                    fs.WriteByte(themeBytes[i]);
+                }
+            
+
+            Console.WriteLine("Unity was successfully patched. Enjoy!");
+        }
+
+        private static IEnumerable<int> FindPattern(byte[] needle, byte[] haystack)
+        {
+            return new BinarySearcher(needle).Search(haystack).ToArray();
+        }
+
+        private static OperatingSystem DetectOperatingSystem()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return OperatingSystem.Windows;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return OperatingSystem.MacOS;
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return OperatingSystem.Linux;
+            }
+
+            return OperatingSystem.Unknown;
         }
     }
 }
