@@ -60,6 +60,8 @@ Troubleshooting
 To get the highest chance of success, you should always run the patch on a clean install of Unity. If that doesn't work, you can try:
 
 * Resetting your user preferences either manually or by calling [`EditorPrefs.DeleteAll()`](https://github.com/aevitas/unity-patch/issues/17#issuecomment-592070343)
+* On MacOS Unity might be displaying a mix of Dark and Light Themes after patching. This can be resolved by restarting Unity. After restarting Unity the Theme should display correctly.
+* If you get `command not found`, try changing permissions for the file by running `chmod +x Patcher`. If running the patcher again gives you the following error `Can not patch the specified file - it is marked as read only!` then you need to check Unity to ensure you have write permissions for the `Unity.app` file as well.
 
 Issues
 ======
@@ -81,8 +83,3 @@ For example, on Linux you would run:
 or on Mac:
 
 `sudo ./osx-64/Patcher -e=/Applications/Unity/Hub/Editor/<VERSION>/Unity.app/Contents/MacOS/Unity --mac --t=dark`
-
-**NOTE:**
-On MacOS Unity might be displaying a mix of Dark and Light Themes after patching. This can be resolved by restarting Unity. After restarting Unity the Theme should display correctly.
-
-If you get `command not found`, try changing permissions for the file by running `chmod +x Patcher`. If running the patcher again gives you the following error `Can not patch the specified file - it is marked as read only!` then you need to check Unity to ensure you have write permissions for the `Unity.app` file as well.
