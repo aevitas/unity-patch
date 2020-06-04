@@ -42,15 +42,16 @@ patcher.exe --windows --version=2020.1 --t=dark
 
 Currently, the following OS and Unity version combinations are supported:
 
-|        | Windows            | MacOS              | Linux              |
-|--------|:------------------:|:------------------:|:------------------:|
-| 2020.1 | :white_check_mark: | :white_check_mark: |         :x:        |
-| 2019.3 | :white_check_mark: | :white_check_mark: |         :x:        |
-| 2019.2 | :white_check_mark: |         :x:        | :white_check_mark: |
-| 2019.1 |         :x:        | :white_check_mark: |         :x:        | 
-| 2018.4 | :white_check_mark: | :white_check_mark: |         :x:        |
-| 2018.3 | :white_check_mark: |         :x:        |         :x:        |
-| 2018.2 | :white_check_mark: |         :x:        |         :x:        |
+|         | Windows            | MacOS              | Linux              |
+|---------|:------------------:|:------------------:|:------------------:|
+| 2020.2a |         :x:        |         :x:        | :white_check_mark: |
+| 2020.1b | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| 2019.3  | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| 2019.2  | :white_check_mark: |         :x:        | :white_check_mark: |
+| 2019.1  |         :x:        | :white_check_mark: | :white_check_mark: | 
+| 2018.4  | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| 2018.3  | :white_check_mark: |         :x:        |         :x:        |
+| 2018.2  | :white_check_mark: |         :x:        |         :x:        |
 
 If you don't specify a version, the patcher will select the most recent version for your operating system.
 
