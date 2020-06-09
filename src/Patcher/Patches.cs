@@ -56,13 +56,25 @@ namespace Patcher
             },
             new PatchInfo
             {
-                Version = "2019.1.0f2",
+                Version = "2019.1",
                 DarkPattern = new byte[] {0x75, 0x03, 0x41, 0x8b, 0x06, 0x48},
                 LightPattern = new byte[] {0x74, 0x03, 0x41, 0x8b, 0x06, 0x48}
             },
             new PatchInfo
             {
+                Version = "2019.2",
+                DarkPattern = new byte[] {0x75, 0x04, 0x8b, 0x03, 0xeb, 0x02},
+                LightPattern = new byte[] {0x74, 0x04, 0x8b, 0x03, 0xeb, 0x02}
+            },
+            new PatchInfo
+            {
                 Version = "2019.3",
+                DarkPattern = new byte[] {0x85, 0xD5, 0x00, 0x00, 0x00, 0x8B, 0x03},
+                LightPattern = new byte[] {0x84, 0xD5, 0x00, 0x00, 0x00, 0x8B, 0x03}
+            },
+            new PatchInfo
+            {
+                Version = "2019.4",
                 DarkPattern = new byte[] {0x85, 0xD5, 0x00, 0x00, 0x00, 0x8B, 0x03},
                 LightPattern = new byte[] {0x84, 0xD5, 0x00, 0x00, 0x00, 0x8B, 0x03}
             },
@@ -103,6 +115,12 @@ namespace Patcher
             new PatchInfo
             {
                 Version = "2019.3",
+                DarkPattern = new byte[] {0x75, 0x06, 0x41, 0x8b, 0x04, 0x24, 0xeb, 0x02},
+                LightPattern = new byte[] {0x74, 0x06, 0x41, 0x8b, 0x04, 0x24, 0xeb, 0x02}
+            },
+            new PatchInfo
+            {
+                Version = "2019.4",
                 DarkPattern = new byte[] {0x75, 0x06, 0x41, 0x8b, 0x04, 0x24, 0xeb, 0x02},
                 LightPattern = new byte[] {0x74, 0x06, 0x41, 0x8b, 0x04, 0x24, 0xeb, 0x02}
             },
