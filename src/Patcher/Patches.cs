@@ -43,7 +43,7 @@ namespace Patcher
                 Version = "2019.4",
                 LightPattern = new byte[] {0x75, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49},
                 DarkPattern = new byte[] {0x74, 0x15, 0x33, 0xC0, 0xEB, 0x13, 0x90, 0x49}
-            }
+            },
             new PatchInfo
             {
                 Version = "2020.1",
