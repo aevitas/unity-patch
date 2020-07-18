@@ -46,7 +46,7 @@ Currently, the following OS and Unity version combinations are supported:
 |---------|:------------------:|:------------------:|:------------------:|
 | 2020.2a |         :x:        | :white_check_mark: | :white_check_mark: |
 | 2020.1b | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| 2019.4  |         :x:        | :white_check_mark: | :white_check_mark: |
+| 2019.4  | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | 2019.3  | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | 2019.2  | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | 2019.1  |         :x:        | :white_check_mark: | :white_check_mark: | 
